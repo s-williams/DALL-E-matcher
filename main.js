@@ -1,20 +1,17 @@
-loadSprite("bg1", "gfx/bg1.jpg");
-loadSprite("bg2", "gfx/bg2.jpg");
-loadSprite("bg3", "gfx/bg3.jpg");
-loadSprite("bg4", "gfx/bg4.jpg");
-loadSprite("bg5", "gfx/bg5.jpg");
-loadSprite("bg6", "gfx/bg6.jpg");
-loadSprite("bg7", "gfx/bg7.jpg");
-loadSprite("bg8", "gfx/bg8.jpg");
-loadSprite("bg9", "gfx/bg9.jpg");
+const BGS_NUMBER = 16;
+const HIDDENS_NUMBER = 11;
+const BORDER = 20;
 
-loadSprite("hidden", "gfx/hidden.jpg");
+for (let i = 1; i <= BGS_NUMBER; i++) {
+    loadSprite("bg" + i, "gfx/bg" + i + ".jpg");
+}
+for (let i = 1; i <= HIDDENS_NUMBER; i++) {
+    loadSprite("hidden" + i, "gfx/hidden" + i + ".jpg");
+}
 
 loadSound("success", "sfx/success.wav");
 loadSound("victory", "sfx/victory.ogg");
 loadSound("wrong", "sfx/wrong.ogg");
-
-const BORDER = 20;
 
 scene("main", (hiScore = 0, carryOverScore = 0, multiplier = 1) => {
     let waiting = false;
@@ -87,7 +84,7 @@ scene("main", (hiScore = 0, carryOverScore = 0, multiplier = 1) => {
         "sfxLabel",
     ]);
     onClick("sfxLabel", () => toggleMute())
-    onKeyPress("r", () => toggleMute());
+    onKeyPress("r", () => reset());
     onKeyPress("m", () => toggleMute());
     const reset = () => {
         if (!waiting) {
@@ -128,7 +125,7 @@ scene("main", (hiScore = 0, carryOverScore = 0, multiplier = 1) => {
         "bg9",
     ]
     add([
-        sprite(bgs[Math.floor(Math.random() * bgs.length)]),
+        sprite("bg" + Math.ceil(Math.random() * BGS_NUMBER)),
         scale(width() / 256, height() / 256),
         "bg"
     ])
@@ -137,12 +134,19 @@ scene("main", (hiScore = 0, carryOverScore = 0, multiplier = 1) => {
      * Game
      */
     let spriteOptions = [
-        "dog",
         "cat",
+        "chicken",
+        "cow",
+        "dog",
+        "elephant",
+        "giraffe",
         "rabbit",
+        "octopus",
         "parrot",
         "pig",
-        "cow",
+        "spider",
+        "tiger",
+        "zebra",
     ]
     let chosenSprites = []
     let sprites = []
@@ -160,12 +164,14 @@ scene("main", (hiScore = 0, carryOverScore = 0, multiplier = 1) => {
         }
     });
 
+    const hidden = "hidden" + Math.ceil(Math.random() * HIDDENS_NUMBER);
+
     let frame = height() - BORDER * 2;
     shuffle(sprites.concat(sprites)).forEach((sprit, index) => {
         const x = ((index + 1) * 2 - 1) % 8;
         const y = ((Math.floor(index / 4) + 1) * 2 - 1);
         add([
-            sprite("hidden"),
+            sprite(hidden),
             scale(0.3),
             pos(x * width() / 8, BORDER + y * frame / 8),
             area({scale: 1}),
@@ -202,9 +208,9 @@ scene("main", (hiScore = 0, carryOverScore = 0, multiplier = 1) => {
                     waiting = true;
                     playSound("wrong");
                     wait(1, () => {
-                        cardIsActive.use(sprite("hidden"));
+                        cardIsActive.use(sprite(hidden));
                         cardIsActive = null;
-                        card.use(sprite("hidden"));
+                        card.use(sprite(hidden));
                         waiting = false;
                     })
                 }
